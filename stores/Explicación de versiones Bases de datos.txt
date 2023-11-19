@@ -1,0 +1,4 @@
+Versiones de Bases de Datos:
+
+Versión 0: Original
+Versión 1: Selección de variables y cambios de nombres
