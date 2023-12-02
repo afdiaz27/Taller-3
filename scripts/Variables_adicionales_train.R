@@ -10,7 +10,7 @@ p_load(tidyverse, # Manipular dataframes
 
 ##Establecimiento del directorio de trabajo y cargue de base de datos
 
-setwd("d:/Javier/Desktop/UNIANDES/Big Data/Taller-3/stores/Bases de datos - Versión 3")
+setwd("C:/Users/de.sandoval10/Documents/GitHub/Taller-3/stores/Bases de datos - Versión 3")
 
 ######### Creación de variables para base train de hogares
 
@@ -109,7 +109,7 @@ for (i in 1:nrow(df_train_hogares)) {
   df_train_hogares$ocupacion_jefe_hogar[i] <- info_jefe_hogar$relab[info_jefe_hogar$JefeHogar == 1]
 }
 
-### 6. Educación del jefe de hogar
+### 7. Educación del jefe de hogar
 
 # Crear una nueva columna en df_hogares para almacenar la edad del jefe de hogar
 df_train_hogares$educacion_jefe_hogar <- NA
@@ -127,7 +127,7 @@ for (i in 1:nrow(df_train_hogares)) {
 }
 
 
-### 7. Porcentaje de edad de trabajo
+### 8. Porcentaje de edad de trabajo
 
 df_train_hogares <- df_train_hogares %>%
   mutate(porcentaje_edad_trabajo = ((Nper-menores_edad_en_hogar)/Nper)*100)
@@ -156,7 +156,7 @@ df_train_hogares <- df_train_hogares %>%
   mutate(porcentaje_ocupados = ((Nper-menores_edad_en_hogar)-ocupados)/(Nper-menores_edad_en_hogar)*100)
 
 
-### 10. Máximo nivel educativo de la unidad de gasto
+### 9. Máximo nivel educativo de la unidad de gasto
 
 df_train_hogares$maxEducLevel_hogar <- 0
 
@@ -175,6 +175,8 @@ for (i in 1:nrow(df_train_hogares)) {
   df_train_hogares$maxEducLevel_hogar[i] <- max_educ_hogar
 }
 
-save(df_train_hogares,file = "d:/Javier/Desktop/UNIANDES/Big Data/Taller-3/stores/Bases de datos - Versión 4/train_hogares_4.Rda")
+save(df_train_hogares,file = "C:/Users/de.sandoval10/Documents/GitHub/Taller-3/stores/Bases de datos - Versión 4/train_hogares_4.Rda")
+
+
 
 
