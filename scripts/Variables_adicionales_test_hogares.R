@@ -10,7 +10,7 @@ p_load(tidyverse, # Manipular dataframes
 
 ##Establecimiento del directorio de trabajo y cargue de base de datos
 
-setwd("C:/Users/de.sandoval10/Documents/GitHub/Taller-3/stores/Bases de datos - Versión 3")
+setwd("C:/Users/dj.farfan10/Documents/GitHub/Taller-3/stores/Bases de datos - Versión 3")
 
 ######### Creación de variables para base test de hogares
 
@@ -122,18 +122,18 @@ for (i in 1:nrow(df_test_hogares)) {
 
 ### 7. Porcentaje de edad de trabajo
 
-df_test_hogares <- df_test_hogares %>%
-  mutate(porcentaje_edad_trabajo = ((Nper-menores_edad_en_hogar)/Nper)*100)
+df_test_hogares_2 <- df_test_hogares_2 %>%
+  mutate(porcentaje_edad_trabajo = ((Nper-menores_edad)/Nper)*100)
 
 ### 8. Porcentaje de ocupados
 
-df_test_hogares$ocupados <- 0
+df_test_hogares_2$ocupados <- 0
 
 # Iterar sobre cada hogar en df_train_hogares
 
-for (i in 1:nrow(df_test_hogares)) {
+for (i in 1:nrow(df_test_hogares_2)) {
   # Obtener el ID del hogar actual
-  id_hogar_actual <- df_test_hogares$id[i]
+  id_hogar_actual <- df_test_hogares_2$id[i]
   
   # Filtrar las personas que pertenecen al hogar actual en df_train_personas
   personas_en_hogar <- df_test_personas[df_test_personas$id == id_hogar_actual, ]
@@ -142,11 +142,11 @@ for (i in 1:nrow(df_test_hogares)) {
   ocupados_hogar <- sum(personas_en_hogar$Ocu == 1)
   
   # Actualizar la columna en df_train_hogares con la cantidad de menores de edad
-  df_test_hogares$ocupados[i] <- ocupados_hogar
+  df_test_hogares_2$ocupados[i] <- ocupados_hogar
 }
 
-df_test_hogares <- df_test_hogares %>%
-  mutate(porcentaje_ocupados = ((Nper-menores_edad_en_hogar)-ocupados)/(Nper-menores_edad_en_hogar)*100)
+df_test_hogares_2 <- df_test_hogares_2 %>%
+  mutate(porcentaje_ocupados = (ocupados)/(Nper-menores_edad)*100)
 
 
 ### 10. Máximo nivel educativo de la unidad de gasto
@@ -169,4 +169,37 @@ for (i in 1:nrow(df_test_hogares)) {
 }
 
 save(df_test_hogares,file = "C:/Users/de.sandoval10/Documents/GitHub/Taller-3/stores/Bases de datos - Versión 4/test_hogares_4_1.Rda")
+
+load("test_hogares_4.Rda")
+
+
+load("test_hogares_4_1.Rda")
+df_test_hogares_1<- df_test_hogares
+save(df_test_hogares_1,file = "C:/Users/dj.farfan10/Documents/GitHub/Taller-3/stores/Bases de datos - Versión 4/test_hogares_4_1.Rda")
+
+df_test_hogares_1<- df_test_hogares_1 %>%
+  select(id, porcentaje_ocupados,maxEducLevel_hogar)
+
+df_test_hogares_2 <- merge(df_test_hogares, df_test_hogares_1, by = "id", all.x = FALSE)
+
+df_test_hogares_2 <- select(df_test_hogares_2, -c(porcentaje_ocupados.y, maxEducLevel_hogar.y))
+
+df_test_hogares_2 <- df_test_hogares_2 %>%
+  rename(porcentaje_ocupados = porcentaje_ocupados.x, maxEducLevel_hogar = maxEducLevel_hogar.x)
+
+summary(df_test_hogares_2$porcentaje_ocupados)
+
+summary(df_test_hogares_2$porcentaje_edad_trabajo)
+
+summary(df_test_hogares_2$porcentaje_ocupados)
+
+df_test_hogares_2 <- df_test_hogares_2 %>%
+  mutate(porcentaje_ocupados = ifelse(porcentaje_ocupados == Inf, (100/Nper), porcentaje_ocupados))
+
+df_test_hogares_2$porcentaje_ocupados <- ifelse(is.na(df_test_hogares_2$porcentaje_ocupados), 0, df_test_hogares_2$porcentaje_ocupados)
+
+df_test_hogares_2 <- df_test_hogares_2 %>%
+  mutate(porcentaje_ocupados = ifelse(porcentaje_ocupados >100, 100, porcentaje_ocupados))
+
+save(df_test_hogares_2,file = "C:/Users/dj.farfan10/Documents/GitHub/Taller-3/stores/Bases de datos - Versión 4/test_hogares_4_1.Rda")
 
