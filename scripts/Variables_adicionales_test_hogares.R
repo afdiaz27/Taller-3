@@ -10,7 +10,7 @@ p_load(tidyverse, # Manipular dataframes
 
 ##Establecimiento del directorio de trabajo y cargue de base de datos
 
-setwd("C:/Users/dj.farfan10/Documents/GitHub/Taller-3/stores/Bases de datos - Versión 3")
+setwd("C:/Users/de.sandoval10/Documents/GitHub/Taller-3/stores/Bases de datos - Versión 3")
 
 ######### Creación de variables para base test de hogares
 
@@ -168,5 +168,5 @@ for (i in 1:nrow(df_test_hogares)) {
   df_test_hogares$maxEducLevel_hogar[i] <- max_educ_hogar
 }
 
-save(df_test_hogares,file = "C:/Users/dj.farfan10/Documents/GitHub/Taller-3/stores/Bases de datos - Versión 4/test_hogares_4.Rda")
+save(df_test_hogares,file = "C:/Users/de.sandoval10/Documents/GitHub/Taller-3/stores/Bases de datos - Versión 4/test_hogares_4_1.Rda")
 
