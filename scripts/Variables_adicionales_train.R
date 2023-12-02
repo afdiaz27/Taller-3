@@ -10,7 +10,7 @@ p_load(tidyverse, # Manipular dataframes
 
 ##Establecimiento del directorio de trabajo y cargue de base de datos
 
-setwd("C:/Users/de.sandoval10/Documents/GitHub/Taller-3/stores/Bases de datos - Versión 3")
+setwd("C:/Users/dj.farfan10/Documents/GitHub/Taller-3/stores/Bases de datos - Versión 4")
 
 ######### Creación de variables para base train de hogares
 
@@ -153,7 +153,7 @@ for (i in 1:nrow(df_train_hogares)) {
 }
 
 df_train_hogares <- df_train_hogares %>%
-  mutate(porcentaje_ocupados = ((Nper-menores_edad_en_hogar)-ocupados)/(Nper-menores_edad_en_hogar)*100)
+  mutate(porcentaje_ocupados = (ocupados)/(Nper-menores_edad)*100)
 
 
 ### 9. Máximo nivel educativo de la unidad de gasto
@@ -177,6 +177,25 @@ for (i in 1:nrow(df_train_hogares)) {
 
 save(df_train_hogares,file = "C:/Users/de.sandoval10/Documents/GitHub/Taller-3/stores/Bases de datos - Versión 4/train_hogares_4.Rda")
 
+load("train_hogares_4_1.Rda")
 
+df_train_hogares <- df_train_hogares %>%
+  mutate(porcentaje_edad_trabajo = ifelse(porcentaje_edad_trabajo <= 1, (100/Nper), porcentaje_edad_trabajo))
 
+summary(df_train_hogares$porcentaje_edad_trabajo)
+
+df_train_hogares <- df_train_hogares %>%
+  mutate(porcentaje_ocupados = ifelse(porcentaje_ocupados < 0, 0, porcentaje_ocupados))
+
+df_train_hogares <- df_train_hogares %>%
+  mutate(porcentaje_ocupados = ifelse(porcentaje_ocupados == Inf, 0, porcentaje_ocupados))
+
+df_train_hogares <- df_train_hogares %>%
+  mutate(porcentaje_ocupados = ifelse(porcentaje_ocupados >100, 100, porcentaje_ocupados))
+
+df_train_hogares$porcentaje_ocupados <- ifelse(is.na(df_train_hogares$porcentaje_ocupados), 0, df_train_hogares$porcentaje_ocupados)
+
+summary(df_train_hogares$porcentaje_ocupados)
+
+save(df_train_hogares,file = "C:/Users/dj.farfan10/Documents/GitHub/Taller-3/stores/Bases de datos - Versión 4/train_hogares_4_1.Rda")
 
