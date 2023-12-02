@@ -36,7 +36,7 @@ df_test_hogares_2$edad_jefe_hogar<-as.double(df_test_hogares_2$edad_jefe_hogar)
 df_test_hogares_2$porcentaje_ocupados<-as.double(df_test_hogares_2$porcentaje_ocupado)
 df_test_hogares_2$menores_edad<-as.double(df_test_hogares_2$menores_edad)
 
-variables_categoricas <- c("Dominio",
+variables_categoricas <- c("Clase",
                            "Propiedad",
                            "jefe_mujer",
                            "maxEducLevel_hogar",
@@ -98,7 +98,7 @@ predict <- stats::predict
 
 ##### creación de receta de los modelos a usar
 
-modelo <- as.formula("Pobre ~ Dominio + personasxhab + Propiedad + Nper + jefe_mujer + edad_jefe_hogar+maxEducLevel_hogar+ocupacion_jefe_hogar+porcentaje_ocupados+menores_edad")
+modelo <- as.formula("Pobre ~ personasxhab + Propiedad + Nper + jefe_mujer + edad_jefe_hogar+maxEducLevel_hogar+ocupacion_jefe_hogar+porcentaje_ocupados+menores_edad")
 
 ffcv<-function(...)c(twoClassSummary(...), defaultSummary(...))
 Control <- trainControl(method = "cv",
@@ -137,21 +137,70 @@ with(testR,table(Pobre,logitM1))
 
 logitM1
 
-# Datos Test -----
-coeficientes <- coef(logitM1$finalModel,c(logitM1$finalModel$lambdaOpt,
-                                          logitM1$finalModel$a0)) %>%
-  as.matrix() %>% 
-  as.tibble(rownames="predictor") %>% 
-  rename(coeficiente=s0)
-
-data <- df_test_hogares_2
 
 # Exportar resultados
 
 d_submit <- df_test_hogares_2
 d_submit$predict <- predict(logitM1,d_submit,type = "prob")[,1]
+
 submit <- d_submit %>% 
   mutate(Pobre=ifelse(predict>0.5,1,0)) %>% 
   select(id,Pobre)
 prop.table(table(submit$Pobre))
-write.csv(submit,file = "../stores/i1.csv",row.names = FALSE)
+
+
+write.csv(submit,file = "../Bases de datos - Versión 4/logit1.csv",row.names = FALSE)
+
+
+modelo2 <- as.formula("Pobre ~ personasxhab + Propiedad + jefe_mujer + edad_jefe_hogar+maxEducLevel_hogar+ocupacion_jefe_hogar+menores_edad")
+
+ffcv<-function(...)c(twoClassSummary(...), defaultSummary(...))
+Control <- trainControl(method = "cv",
+                        number = 5,
+                        summaryFunction = ffcv,
+                        classProbs = TRUE,
+                        verbose=FALSE,
+                        savePredictions = T)
+
+######## Logit 2
+
+logitM2 <- train(
+  modelo2,
+  data = training,
+  method = "glm",
+  trControl = Control,
+  family = "binomial",
+  preProcess = c("center", "scale")
+)
+
+logitM2
+
+testR <- data.frame(Pobre=testing$Pobre)
+testR$logitM2 <- predict(logitM2,
+                         newdata = testing,
+                         type= "prob")[,1]
+
+testR
+
+testR <- testR %>% 
+  mutate(
+    logitM2=ifelse(logitM2>0.5,"si","no")
+  )
+
+with(testR,table(Pobre,logitM2))
+
+logitM2
+
+
+# Exportar resultados
+
+d_submit <- df_test_hogares_2
+d_submit$predict <- predict(logitM2,d_submit,type = "prob")[,1]
+
+submit <- d_submit %>% 
+  mutate(Pobre=ifelse(predict>0.5,1,0)) %>% 
+  select(id,Pobre)
+prop.table(table(submit$Pobre))
+
+
+write.csv(submit,file = "../Bases de datos - Versión 4/logit2_clasificacion.csv",row.names = FALSE)
