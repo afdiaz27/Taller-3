@@ -10,7 +10,7 @@ p_load(tidyverse, # Manipular dataframes
 
 ##Establecimiento del directorio de trabajo y cargue de base de datos
 
-setwd("d:/Javier/Desktop/UNIANDES/Big Data/Taller-3/stores/Bases de datos - Versión 3")
+setwd("C:/Users/dj.farfan10/Documents/GitHub/Taller-3/stores/Bases de datos - Versión 3")
 
 ######### Creación de variables para base test de hogares
 
@@ -49,7 +49,7 @@ df_test_hogares <- df_test_hogares %>%
 ### 4. Edad del jefe de hogar
 
 # Crear una nueva columna en df_hogares para almacenar la edad del jefe de hogar
-dftest_hogares$edad_jefe_hogar <- NA
+df_test_hogares$edad_jefe_hogar <- NA
 
 # Iterar sobre cada hogar en df_train_hogares
 for (i in 1:nrow(df_test_hogares)) {
@@ -168,6 +168,5 @@ for (i in 1:nrow(df_test_hogares)) {
   df_test_hogares$maxEducLevel_hogar[i] <- max_educ_hogar
 }
 
-save(df_test_hogares,file = "d:/Javier/Desktop/UNIANDES/Big Data/Taller-3/stores/Bases de datos - Versión 4/test_hogares_4.Rda")
-
+save(df_test_hogares,file = "C:/Users/dj.farfan10/Documents/GitHub/Taller-3/stores/Bases de datos - Versión 4/test_hogares_4.Rda")
 
