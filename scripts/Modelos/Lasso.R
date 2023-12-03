@@ -7,6 +7,12 @@ test_hogares <- read.csv('C:/Users/afdia/OneDrive - Universidad de los Andes/Mae
 train_personas <- read.csv('C:/Users/afdia/OneDrive - Universidad de los Andes/Maestría en Economía Aplicada/Big Data y Machine Learning/Repositorios-GitHub/Taller-3/stores/Bases de datos - Versión 3/train_personas_3.csv')
 test_personas <- read.csv('C:/Users/afdia/OneDrive - Universidad de los Andes/Maestría en Economía Aplicada/Big Data y Machine Learning/Repositorios-GitHub/Taller-3/stores/Bases de datos - Versión 3/test_personas_3.csv')
 
+train_personas <- train_personas %>% mutate(LogIngreso = log(Ingreso+0.00001))
+
+train_personas <- train_personas %>% mutate(Edad2 = Edad^2)
+
+test_personas <- test_personas %>% mutate(Edad2 = Edad^2)
+
 lista_var_pers_train_categ  <- c('Sexo', 'JefeHogar', 'FormalSalud', 'SeguridadSocial', 'maxEducLevel', 'relab', 'SubsAlimen', 'SubsTrans', 'SubsFamil', 'SubsEducativo', 'Viaticos', 'Bonificaciones', 'FormalPension', 'MasHoras', 'PagosExtraPensArri', 'Ayuda', 'GanancFinan','EdadTrabajo','Ocu', 'Desocu', 'Inact')
 
 train_personas <- train_personas %>% mutate_at(lista_var_pers_train_categ, as.factor)
@@ -17,7 +23,7 @@ summary(train_personas)
 
 train_fold <- vfold_cv(train_personas, v = 5)
 
-recipe1 <- recipe(formula = Ingreso ~ Sexo+Edad+JefeHogar+FormalSalud+SeguridadSocial+maxEducLevel+relab+SubsAlimen+SubsTrans+SubsFamil+SubsEducativo+Viaticos+Bonificaciones+hoursWorkUsual+sizeFirm+FormalPension+MasHoras+PagosExtraPensArri+Ayuda+GanancFinan+EdadTrabajo+Ocu+Desocu+Inact, data = train_personas) %>% 
+recipe1 <- recipe(formula = LogIngreso ~ Sexo+Edad2+Edad+JefeHogar+FormalSalud+SeguridadSocial+maxEducLevel+relab+SubsAlimen+SubsTrans+SubsFamil+SubsEducativo+Viaticos+Bonificaciones+hoursWorkUsual+sizeFirm+FormalPension+MasHoras+PagosExtraPensArri+Ayuda+GanancFinan+EdadTrabajo+Ocu+Desocu+Inact, data = train_personas) %>% 
   step_novel(all_nominal_predictors()) %>%
   step_dummy(all_nominal_predictors()) %>% 
   step_zv(all_predictors()) %>% 
@@ -46,12 +52,15 @@ modelo_01 <- finalize_workflow(workf1, best_penalty1)
 modelo_01_fit <- fit(modelo_01, data = train_personas)
 
 augment(modelo_01_fit, new_data = train_personas) %>%
-  mae(truth = Ingreso, estimate = .pred)
+  mae(truth = LogIngreso, estimate = .pred)
 
 ##Matriz de confusión para datos train
 
-Ingreso_pred_train<-deframe(predict(modelo_01_fit, train_personas))
+Log_Ingreso_pred_train<-deframe(predict(modelo_01_fit, train_personas))
 
+Ingreso_pred_train<-exp(deframe(predict(modelo_01_fit, train_personas)))
+
+train_personas$Log_Ingreso_pred_train<-Log_Ingreso_pred_train
 train_personas$Ingreso_pred_train<-Ingreso_pred_train
 
 Ingreso_train_hogar<-aggregate(train_personas$Ingreso_pred_train, by=list(Category=train_personas$id), FUN=sum)
@@ -72,7 +81,7 @@ matriz_confusion
 
 ##Predicción de test
 
-pred_ingreso<-deframe(predict(modelo_01_fit, test_personas))
+pred_ingreso<-exp(deframe(predict(modelo_01_fit, test_personas)))
 
 test_personas$Ingreso<-pred_ingreso
 
@@ -91,6 +100,6 @@ test_hogares_cargue<-test_hogares_cargue %>% mutate(Pobre = case_when(Ingpcug >=
                                                     
 test_hogares_cargue<-test_hogares_cargue %>% select(id,Pobre)
 
-write.csv(test_hogares_cargue,"C:/Users/afdia/OneDrive - Universidad de los Andes/Maestría en Economía Aplicada/Big Data y Machine Learning/Repositorios-GitHub/Taller-3/stores/Resultados/Predicción Ingreso/Lasso/Lasso_01.csv", row.names = FALSE)
+write.csv(test_hogares_cargue,"C:/Users/afdia/OneDrive - Universidad de los Andes/Maestría en Economía Aplicada/Big Data y Machine Learning/Repositorios-GitHub/Taller-3/stores/Resultados/Predicción Ingreso/Lasso/Lasso_03.csv", row.names = FALSE)
                                                     
                                                     
