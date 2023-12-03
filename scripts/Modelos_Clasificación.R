@@ -249,3 +249,42 @@ submit <- d_submit %>%
   select(id,Pobre)
 prop.table(table(submit$Pobre))
 write.csv(submit,file = "../Bases de datos - Versión 4/lasso_1_clasificación.csv",row.names = FALSE)
+
+###### Lasso 2 con modelo y corte 0.5
+
+lasso2 <- train(
+  modelo3,
+  data = training,
+  method = "glmnet",
+  trControl = Control,
+  family = "binomial",
+  metric = "Sens",
+  tuneGrid = expand.grid(alpha = 0,lambda=grid),
+  preProcess = c("center", "scale")
+)
+
+lasso2
+
+testR <- data.frame(Pobre=testing$Pobre)
+testR$lasso2 <- predict(lasso2,
+                        newdata = testing,
+                        type= "prob")[,1]
+
+testR <- testR %>% 
+  mutate(
+    lasso2=ifelse(lasso2>0.5,"si","no")
+  )
+
+with(testR,table(Pobre,lasso2))
+
+d_submit <- df_test_hogares_2
+d_submit$predict <- predict(lasso2,d_submit,type = "prob")[,1]
+submit <- d_submit %>% 
+  mutate(Pobre=ifelse(predict>0.5,1,0)) %>% 
+  select(id,Pobre)
+prop.table(table(submit$Pobre))
+write.csv(submit,file = "../Bases de datos - Versión 4/lasso_2_clasificación.csv",row.names = FALSE)
+
+
+### Lasso 3 con roc
+
