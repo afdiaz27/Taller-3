@@ -19,7 +19,7 @@ p_load("GGally","psych","rpart.plot","ROCR","gamlr","modelsummary","gtsummary","
        "readr","AER","MLmetrics","smotefamily","pROC","smotefamily","rpart","randomForest","rpart", "Metrics",
        "rattle")
 
-setwd("d:/Javier/Desktop/UNIANDES/Big Data/Taller-3/stores/Bases de datos - Versión 4")
+setwd("C:/Users/dj.farfan10/Documents/GitHub/Taller-3/stores/Bases de datos - Versión 4")
 
 load("train_hogares_4_1.Rda")
 load("test_hogares_4_1.Rda")
@@ -431,7 +431,7 @@ prop.table(table(submit$Pobre))
 write.csv(submit,file = "../Bases de datos - Versión 4/lasso_4_clasificación.csv",row.names = FALSE)
 
 
-##### Lasso 4 con modelo 3
+##### Lasso  con modelo 3
 
 
 grid3 <- 10^seq(-4, 0.001, length = 500)
@@ -466,5 +466,5 @@ d_submit$predict <- predict(lasso5,d_submit,type = "prob")[,1]
 submit <- d_submit %>% 
   mutate(Pobre=ifelse(predict>0.5,1,0)) %>% 
   select(id,Pobre)
-prop.table(table(submit$Pobre))
+ 
 write.csv(submit,file = "../Bases de datos - Versión 4/lasso_5_clasificación.csv",row.names = FALSE)
