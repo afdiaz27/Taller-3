@@ -10,7 +10,7 @@ En este repositorio se desarrolla el código de limpieza de las bases de datos, 
 
 Este repositorio contiene las siguientes secciones: Repositorio del Taller de Big Data y Machine Learning
 
-document: contiene el documento final
-scripts: contiene los códigos trabajados de limpieza de datos y corrida de modelos de predicción
-stores: contiene los datasets trabajados y los creados dentro del ejercicio como resultado de la limpieza de datos. Tambien contiene las salidas de las predicciones cargadas en Kaggle en formato.csv
-views: contiene las figuras y las tablas resultantes de la estimación
+1. document: contiene el documento final
+2. scripts: contiene los códigos trabajados de limpieza de datos y corrida de modelos de predicción
+3.. stores: contiene los datasets trabajados y los creados dentro del ejercicio como resultado de la limpieza de datos. Tambien contiene las salidas de las predicciones cargadas en Kaggle en formato.csv
+4. views: contiene las figuras y las tablas resultantes de la estimación
