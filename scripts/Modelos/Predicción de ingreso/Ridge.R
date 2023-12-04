@@ -12,12 +12,18 @@ lista_var_pers_train_categ  <- c('Sexo', 'JefeHogar', 'FormalSalud', 'SeguridadS
 train_personas <- train_personas %>% mutate_at(lista_var_pers_train_categ, as.factor)
 
 test_personas <- test_personas %>% mutate_at(lista_var_pers_train_categ, as.factor)
+
+train_personas <- train_personas %>% mutate(Edad2 = Edad^2)
+test_personas <- test_personas %>% mutate(Edad2 = Edad^2)
+
+
 glimpse(train_personas)
+
 summary(train_personas)
 
 train_fold <- vfold_cv(train_personas, v = 5)
 
-recipe1 <- recipe(formula = Ingreso ~ Sexo+Edad+JefeHogar+FormalSalud+SeguridadSocial+maxEducLevel+relab+SubsAlimen+SubsTrans+SubsFamil+SubsEducativo+Viaticos+Bonificaciones+hoursWorkUsual+sizeFirm+FormalPension+MasHoras+PagosExtraPensArri+Ayuda+GanancFinan+EdadTrabajo+Ocu+Desocu+Inact, data = train_personas) %>% 
+recipe1 <- recipe(formula = Ingreso ~ Sexo+Edad+Edad2+JefeHogar+FormalSalud+SeguridadSocial+maxEducLevel+relab+SubsAlimen+SubsTrans+SubsFamil+SubsEducativo+Viaticos+Bonificaciones+hoursWorkUsual+sizeFirm+FormalPension+MasHoras+PagosExtraPensArri+Ayuda+GanancFinan+EdadTrabajo+Ocu+Desocu+Inact, data = train_personas) %>% 
   step_novel(all_nominal_predictors()) %>%
   step_dummy(all_nominal_predictors()) %>% 
   step_zv(all_predictors()) %>% 
@@ -93,4 +99,4 @@ test_hogares_cargue<-test_hogares_cargue %>% mutate(Pobre = case_when(Ingpcug >=
 
 test_hogares_cargue<-test_hogares_cargue %>% select(id,Pobre)
 
-write.csv(test_hogares_cargue,"C:/Users/afdia/OneDrive - Universidad de los Andes/Maestría en Economía Aplicada/Big Data y Machine Learning/Repositorios-GitHub/Taller-3/stores/Resultados/Predicción Ingreso/Ridge/Ridge_02.csv", row.names = FALSE)
+write.csv(test_hogares_cargue,"C:/Users/afdia/OneDrive - Universidad de los Andes/Maestría en Economía Aplicada/Big Data y Machine Learning/Repositorios-GitHub/Taller-3/stores/Resultados/Predicción Ingreso/Ridge/Ridge_04.csv", row.names = FALSE)
