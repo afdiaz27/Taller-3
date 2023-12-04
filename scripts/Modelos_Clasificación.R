@@ -390,7 +390,9 @@ write.csv(submit,file = "../Bases de datos - Versión 4/elastic_net_1.csv",row.n
 
 ##### se modifica el tamaNo de la grilla
 
-##### Lasso con modelo 3
+
+
+##### Lasso 4 con modelo 3
 
 
 grid2 <- 10^seq(-4, 0.01, length = 500)
@@ -406,24 +408,63 @@ lasso4 <- train(
   preProcess = c("center", "scale")
 )
 
-lasso1
+lasso4
 
 testR <- data.frame(Pobre=testing$Pobre)
-testR$lasso1 <- predict(lasso1,
+testR$lasso4 <- predict(lasso4,
                         newdata = testing,
                         type= "prob")[,1]
 
 testR <- testR %>% 
   mutate(
-    lasso1=ifelse(lasso1>0.8,"si","no")
+    lasso1=ifelse(lasso4>0.5,"si","no")
   )
 
-with(testR,table(Pobre,lasso1))
+with(testR,table(Pobre,lasso4))
 
 d_submit <- df_test_hogares_2
-d_submit$predict <- predict(lasso1,d_submit,type = "prob")[,1]
+d_submit$predict <- predict(lasso4,d_submit,type = "prob")[,1]
 submit <- d_submit %>% 
-  mutate(Pobre=ifelse(predict>0.8,1,0)) %>% 
+  mutate(Pobre=ifelse(predict>0.5,1,0)) %>% 
   select(id,Pobre)
 prop.table(table(submit$Pobre))
-write.csv(submit,file = "../Bases de datos - Versión 4/lasso_1_clasificación.csv",row.names = FALSE)
+write.csv(submit,file = "../Bases de datos - Versión 4/lasso_4_clasificación.csv",row.names = FALSE)
+
+
+##### Lasso 4 con modelo 3
+
+
+grid3 <- 10^seq(-4, 0.001, length = 500)
+
+lasso5 <- train(
+  modelo3,
+  data = training,
+  method = "glmnet",
+  trControl = Control,
+  family = "binomial",
+  metric = "Sens",
+  tuneGrid = expand.grid(alpha = 0,lambda=grid3),
+  preProcess = c("center", "scale")
+)
+
+lasso5
+
+testR <- data.frame(Pobre=testing$Pobre)
+testR$lasso5 <- predict(lasso5,
+                        newdata = testing,
+                        type= "prob")[,1]
+
+testR <- testR %>% 
+  mutate(
+    lasso5=ifelse(lasso5>0.5,"si","no")
+  )
+
+with(testR,table(Pobre,lasso5))
+
+d_submit <- df_test_hogares_2
+d_submit$predict <- predict(lasso5,d_submit,type = "prob")[,1]
+submit <- d_submit %>% 
+  mutate(Pobre=ifelse(predict>0.5,1,0)) %>% 
+  select(id,Pobre)
+prop.table(table(submit$Pobre))
+write.csv(submit,file = "../Bases de datos - Versión 4/lasso_5_clasificación.csv",row.names = FALSE)
